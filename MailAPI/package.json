@@ -1,0 +1,17 @@
+{
+    "dependencies": {
+        "dotenv": "^16.0.3",
+        "form-data": "^4.0.0",
+        "mailgun": "^0.5.0",
+        "mailgun.js": "^8.2.1"
+    },
+    "scripts": {
+        "start": "node server.js"
+    },
+    "name": "mailapi",
+    "version": "1.0.0",
+    "description": "A node REST API for sending alert emails to users, part of the Irri-Gator Project for my SIT210 unit - :)",
+    "main": "server.js",
+    "author": "Allan.O",
+    "license": "ISC"
+}
