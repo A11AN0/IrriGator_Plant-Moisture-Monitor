@@ -5,10 +5,6 @@ const emailInput = document.querySelector(".emailInput");
 const minMoistureInput = document.querySelector(".minMoistureInput");
 const maxMoistureInput = document.querySelector(".maxMoistureInput");
 
-const randomColour = () => {
-    return `hsla(${~~(360 * Math.random())},70%,60%,0.3)`;
-};
-
 const resetVals = (inputObj) => {
     inputObj.value = inputObj.placeholder;
 };
@@ -79,14 +75,14 @@ const validateBeforeSubmit = () => {
 };
 
 const updateSettings = async () => {
-    const rawResponse = await fetch(POST_ENDPOINT, {
+    const rawResponse = await fetch("https://api.thingspeak.com/update.json", {
         method: "POST",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            api_key: API_KEY,
+            api_key: "K58A4TT85PCXBW3Y",
             field1: emailInput.value,
             field2: maxMoistureInput.value,
             field3: minMoistureInput.value,
@@ -97,7 +93,11 @@ const updateSettings = async () => {
 };
 
 const getSettings = async () => {
-    const results = (await fetch(GET_ENDPOINT)).json();
+    const results = (
+        await fetch(
+            "https://api.thingspeak.com/channels/2159771/feeds/last.json?api_key=BJXL1CNIOQBB00XG",
+        )
+    ).json();
     const userSettings = await results;
     emailInput.placeholder = userSettings.field1;
     maxMoistureInput.placeholder = userSettings.field2;
@@ -110,10 +110,6 @@ const getSettings = async () => {
 //will need to make get request to get the email, maxSoilMoisture and minSoilMoisture values from thingspeak api
 
 getSettings();
-
-widgets.forEach((widget) => {
-    widget.style.backgroundColor = randomColour();
-});
 
 //If validated user entries, make post request to update settings
 navButton.addEventListener("click", async () => {
