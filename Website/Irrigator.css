@@ -10,7 +10,7 @@
     max-width: 100vw;
     color: black;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 1fr;
     align-items: center;
     justify-content: center;
     height: fit-content;
@@ -28,7 +28,7 @@
 
 .navButton {
     height: 45px;
-    width: 45%;
+    width: 70%;
     font-size: 15px;
     font-weight: 300;
     color: white;
@@ -43,7 +43,7 @@
 }
 .navTitle {
     text-align: center;
-    font-size: 30px;
+    font-size: 25px;
 }
 
 .widgetFormContainer {
@@ -56,7 +56,6 @@
 .widget {
     width: 250px;
     height: 250px;
-    background-color: brown;
     margin: 1px;
     display: flex;
     flex-direction: column;
@@ -68,17 +67,17 @@
 }
 
 .emailInput {
-    width: 80%;
+    width: 90%;
     height: 30px;
 }
 
 .maxMoistureInput {
-    width: 60%;
+    width: 50%;
     height: 30px;
 }
 
 .minMoistureInput {
-    width: 60%;
+    width: 50%;
     height: 30px;
 }
 
