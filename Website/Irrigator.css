@@ -30,12 +30,20 @@
     height: 45px;
     width: 45%;
     font-size: 15px;
+    font-weight: 300;
+    color: white;
     font-family: "Roboto", sans-serif;
     border-radius: 10px;
+    border: none;
+    background-color: #0c987e;
 }
 
+.widgetTitle {
+    font-weight: 300;
+}
 .navTitle {
     text-align: center;
+    font-size: 30px;
 }
 
 .widgetFormContainer {
@@ -46,8 +54,8 @@
 }
 
 .widget {
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 250px;
     background-color: brown;
     margin: 1px;
     display: flex;
@@ -57,4 +65,27 @@
     color: black;
     border-radius: 10px;
     margin: 1%;
+}
+
+.emailInput {
+    width: 80%;
+    height: 30px;
+}
+
+.maxMoistureInput {
+    width: 60%;
+    height: 30px;
+}
+
+.minMoistureInput {
+    width: 60%;
+    height: 30px;
+}
+
+.input {
+    text-align: center;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    font-size: 15px;
 }
