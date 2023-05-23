@@ -26,6 +26,13 @@
     padding-top: 2%;
 }
 
+@media screen and (max-width: 768px) {
+    .navBar {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+}
+
 .navButton {
     height: 45px;
     width: 70%;
@@ -36,6 +43,12 @@
     border-radius: 10px;
     border: none;
     background-color: #0c987e;
+    margin: auto;
+}
+
+.navButton:hover {
+    transform: scale(1.1);
+    cursor: pointer;
 }
 
 .widgetTitle {
