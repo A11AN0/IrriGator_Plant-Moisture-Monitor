@@ -9,12 +9,27 @@ const randomColour = () => {
     return `hsla(${~~(360 * Math.random())},70%,60%,0.3)`;
 };
 
+const resetVals = (inputObj) => {
+    inputObj.value = inputObj.placeholder;
+};
+
+//input behaviour for placeholder text
+inputs.forEach((input) => {
+    input.addEventListener("mouseover", () => {
+        if (input.value === "") {
+            input.value = input.placeholder;
+        }
+    });
+
+    input.addEventListener("mouseout", () => {
+        if (input.value === input.placeholder) {
+            input.value = "";
+        }
+    });
+});
+
 //Made a validation method to validate user input before making post request
 const validateBeforeSubmit = () => {
-    const resetVals = (inputObj) => {
-        inputObj.value = inputObj.placeholder;
-    };
-
     //if blanks are submitted, replace with placeholder
     inputs.forEach((input) => {
         if (input.value.replace(/\s+/g, "") == "") {
@@ -63,14 +78,48 @@ const validateBeforeSubmit = () => {
     }
 };
 
+const updateSettings = async () => {
+    const rawResponse = await fetch(POST_ENDPOINT, {
+        method: "POST",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            api_key: API_KEY,
+            field1: emailInput.value,
+            field2: maxMoistureInput.value,
+            field3: minMoistureInput.value,
+        }),
+    });
+    const content = await rawResponse.json();
+    console.log(content);
+};
+
+const getSettings = async () => {
+    const results = (await fetch(GET_ENDPOINT)).json();
+    const userSettings = await results;
+    emailInput.placeholder = userSettings.field1;
+    maxMoistureInput.placeholder = userSettings.field2;
+    minMoistureInput.placeholder = userSettings.field3;
+    console.log(userSettings);
+};
+
+//will need to make post request to update the email, maxSoilMoisture and minSoilMoisture values via the thingspeak api
+
 //will need to make get request to get the email, maxSoilMoisture and minSoilMoisture values from thingspeak api
 
-//will need to make put request to update the email, maxSoilMoisture and minSoilMoisture values via the thingspeak api
+getSettings();
 
 widgets.forEach((widget) => {
     widget.style.backgroundColor = randomColour();
 });
 
-navButton.addEventListener("click", () => {
-    validateBeforeSubmit();
+//If validated user entries, make post request to update settings
+navButton.addEventListener("click", async () => {
+    if (validateBeforeSubmit()) {
+        await updateSettings();
+        await getSettings();
+        location.reload();
+    }
 });
