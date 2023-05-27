@@ -24,8 +24,8 @@ const mg = mailgun.client({
 });
 
 function soilMoistureMessage(max, min, current, mail) {
-    const approachingMin = current - min <= 5 && current - min > 0;
-    const approachingMax = max - current <= 5 && max - current > 0;
+    const approachingMin = current - min <= 3 && current - min > 0;
+    const approachingMax = max - current <= 3 && max - current > 0;
     const belowMin = current <= min;
     const aboveMax = current >= max;
 
@@ -59,7 +59,7 @@ function soilMoistureMessage(max, min, current, mail) {
         };
     } else {
         return {
-            message: `Hello, my current soil moisture is ${current}%. This is well within the optimal range! - Awesome job! :)`,
+            message: `Hello, my current soil moisture is ${current}%. This is within the optimal range: (${min}% - ${max}%)! - Awesome job! :)`,
             emailSubject: "Soil Moisture is optimal!",
         };
     }
