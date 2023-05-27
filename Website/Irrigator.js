@@ -4,6 +4,9 @@ const navButton = document.querySelector(".navButton");
 const emailInput = document.querySelector(".emailInput");
 const minMoistureInput = document.querySelector(".minMoistureInput");
 const maxMoistureInput = document.querySelector(".maxMoistureInput");
+const notificationFrequencyInput = document.querySelector(
+    ".notificationFrequencyInput",
+);
 
 const resetVals = (inputObj) => {
     inputObj.value = inputObj.placeholder;
@@ -43,11 +46,12 @@ const validateBeforeSubmit = () => {
             resetVals(maxMoistureInput);
             return false;
         } else if (
-            Number(minMoistureInput.value) < 0 ||
-            Number(maxMoistureInput.value) < 0
+            Number(minMoistureInput.value) < 1 ||
+            Number(maxMoistureInput.value) < 1 ||
+            Number(notificationFrequencyInput.value) < 1
         ) {
             alert(
-                "Sorry, negative values are not permitted for soil moisture settings",
+                "Sorry, 0 or negative values are not permitted for moisture or notification frequency settings",
             );
             resetVals(minMoistureInput);
             resetVals(maxMoistureInput);
@@ -58,18 +62,37 @@ const validateBeforeSubmit = () => {
                 Number(minMoistureInput.placeholder) &&
             Number(maxMoistureInput.value) ===
                 Number(maxMoistureInput.placeholder) &&
+            Number(notificationFrequencyInput.value) ===
+                Number(notificationFrequencyInput.placeholder) &&
             emailInput.value.replace(/\s+/g, "") ===
                 emailInput.placeholder.replace(/\s+/g, "")
         ) {
             alert("Please make at least one change before submitting");
             inputs.forEach((input) => resetVals(input));
+            return false;
+        } else if (
+            Number(maxMoistureInput.value) - Number(minMoistureInput.value) <
+            7
+        ) {
+            alert(
+                "Sorry, 7% is the smallest accurate notification range between minimum and maximum soil moisture thresholds",
+            );
+            return false;
+        } else if (notificationFrequencyInput.value > 2880) {
+            alert(
+                "Sorry, the maximum notification frequency is 2880 minutes (48 hours)",
+            );
+            return false;
         } else {
             return true;
         }
     } catch {
-        alert("Please enter a valid number for the soil moisture settings");
+        alert(
+            "Please enter a valid number for the soil moisture or notification frequency settings",
+        );
         resetVals(minMoistureInput);
         resetVals(maxMoistureInput);
+        resetVals(notificationFrequencyInput);
         return false;
     }
 };
@@ -84,8 +107,9 @@ const updateSettings = async () => {
         body: JSON.stringify({
             api_key: "K58A4TT85PCXBW3Y",
             field1: emailInput.value,
-            field2: maxMoistureInput.value,
-            field3: minMoistureInput.value,
+            field2: Math.round(maxMoistureInput.value),
+            field3: Math.round(minMoistureInput.value),
+            field4: Math.round(notificationFrequencyInput.value),
         }),
     });
     const content = await rawResponse.json();
@@ -102,7 +126,7 @@ const getSettings = async () => {
     emailInput.placeholder = userSettings.field1;
     maxMoistureInput.placeholder = userSettings.field2;
     minMoistureInput.placeholder = userSettings.field3;
-    console.log(userSettings);
+    notificationFrequencyInput.placeholder = userSettings.field4;
 };
 
 //will need to make post request to update the email, maxSoilMoisture and minSoilMoisture values via the thingspeak api

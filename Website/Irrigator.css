@@ -60,7 +60,7 @@ body {
 }
 
 .widgetFormContainer {
-    margin-top: 10%;
+    margin-top: 5%;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -68,8 +68,8 @@ body {
 }
 
 .widget {
-    width: 350px;
-    height: 350px;
+    width: 275px;
+    height: 275px;
     margin: 1px;
     display: flex;
     flex-direction: column;
@@ -95,6 +95,11 @@ body {
     height: 30px;
 }
 
+.notificationFrequencyInput {
+    width: 50%;
+    height: 30px;
+}
+
 .input {
     text-align: center;
     border: none;
@@ -113,6 +118,10 @@ body {
 
 .maxMoisture {
     background-color: #14c5d8be;
+}
+
+.notificationFrequency {
+    background-color: #4c750ac3;
 }
 
 @media screen and (max-width: 768px) {
