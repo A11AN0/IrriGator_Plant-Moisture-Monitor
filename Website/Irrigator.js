@@ -78,6 +78,12 @@ const validateBeforeSubmit = () => {
                 "Sorry, 7% is the smallest accurate notification range between minimum and maximum soil moisture thresholds",
             );
             return false;
+        } else if (
+            Number(maxMoistureInput.value) >= 100 ||
+            Number(minMoistureInput.value) >= 100
+        ) {
+            alert("Sorry, threshold values must be under 100%");
+            return false;
         } else if (notificationFrequencyInput.value > 2880) {
             alert(
                 "Sorry, the maximum notification frequency is 2880 minutes (48 hours)",
