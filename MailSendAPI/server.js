@@ -23,22 +23,87 @@ const mg = mailgun.client({
     key: process.env.MAILGUN_API_KEY,
 });
 
+function soilMoistureMessage(max, min, current, mail) {
+    const approachingMin = current - min <= 5 && current - min > 0;
+    const approachingMax = max - current <= 5 && max - current > 0;
+    const belowMin = current <= min;
+    const aboveMax = current >= max;
+
+    if (belowMin) {
+        return {
+            message: `Hello, my current soil moisture is ${current}%. That's ${
+                min - current === 0 ? "exactly at" : min - current + "% below"
+            } your requested minimum soil moisture threshold of ${min}%, please water me to ensure optimal soil moisture and healthy plants! :)`,
+            emailSubject: "Soil Moisture is too low!",
+        };
+    } else if (aboveMax) {
+        return {
+            message: `Hello, my current soil moisture is ${current}%. That's ${
+                current - max === 0 ? "exactly at" : current - max + "% above"
+            } your requested maximum soil moisture threshold of ${max}%, please slow down on the watering, there's only so much growing plants can take! :)`,
+            emailSubject: "Soil Moisture is too high!",
+        };
+    } else if (approachingMin) {
+        return {
+            message: `Hello, my current soil moisture is ${current}%. That's ${
+                current - min
+            }% away from your requested minimum soil moisture threshold of ${min}%, it's time to start thinking about watering! It's good for you and me :)`,
+            emailSubject: "Almost time to start watering",
+        };
+    } else if (approachingMax) {
+        return {
+            message: `Hello, my current soil moisture is ${current}%. That's ${
+                max - current
+            }% away from your requested maximum soil moisture threshold of ${max}%, it might be best to slow down on the watering! - Everything in moderation :)`,
+            emailSubject: "Let's slow down with the water",
+        };
+    } else {
+        return {
+            message: `Hello, my current soil moisture is ${current}%. This is well within the optimal range! - Awesome job! :)`,
+            emailSubject: "Soil Moisture is optimal!",
+        };
+    }
+}
+
 //should be called if request key matches .env API key
-function sendEmail(emailAddress, minMoisture, currentMoisture) {
-    const message = `Hello, ${emailAddress}, the current soil moisture is ${currentMoisture}% which is ${
-        minMoisture - currentMoisture
-    }% below your requested threshold of ${minMoisture}% - no need to worry, IrriGator has initiated plant watering - Please monitor water levels to ensure that the IrriGator has enough water to continue watering your plants :)`;
+function sendEmail(emailAddress, minMoisture, currentMoisture, maxMoisture) {
+    const message = soilMoistureMessage(
+        maxMoisture,
+        minMoisture,
+        currentMoisture,
+        emailAddress,
+    );
 
     mg.messages
         .create(process.env.BASE_URL, {
-            from: "Excited User <mailgun@sandbox-123.mailgun.org>",
+            from: "IrriGator Notifications <mailgun@sandbox-123.mailgun.org>",
             to: [emailAddress],
-            subject: "IrriGator User Notification - Initiated Plant Watering",
-            text: message,
-            html: `<div style="color:#689F38; background-color:#E8F5E9; border-radius:8px; padding:20px; text-align:center;">
-            ${message}
-          </div>
-          `,
+            subject: message.emailSubject,
+            text: message.message,
+            html: `<div
+                style="
+                color: #e5ffcf;
+                font-weight: bolder;
+                font-style: italic;
+                background-color: #7b4e0c;
+                border-radius: 8px;
+                padding: 20px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                font-family: Arial, sans-serif;
+                background-image: url('https://images.unsplash.com/photo-1512243753-2d6941bef6a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2002&q=80');
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center;
+                background-attachment: fixed;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            "
+        >
+            <p>
+            ${message.message}
+            </p>
+        </div>`,
         })
         .then((msg) => {
             emptyString = msg;
@@ -51,11 +116,15 @@ function sendEmail(emailAddress, minMoisture, currentMoisture) {
 
 app.post("/emailSender", (req, res) => {
     const data = req.body;
-    var emptyMessage = "";
 
     try {
-        const { api_key, email, minimumSoilMoisture, currentSoilMoisture } =
-            data;
+        const {
+            api_key,
+            email,
+            minimumSoilMoisture,
+            currentSoilMoisture,
+            maximumSoilMoisture,
+        } = data;
         // Use the received data as needed
         if (api_key != process.env.MAILGUN_API_KEY) {
             res.json({
@@ -65,15 +134,26 @@ app.post("/emailSender", (req, res) => {
             return;
         } else if (
             !email ||
+            !maximumSoilMoisture ||
+            maximumSoilMoisture < 0 ||
+            minimumSoilMoisture < 0 ||
+            currentSoilMoisture < 0 ||
+            maximumSoilMoisture < minimumSoilMoisture ||
             !minimumSoilMoisture ||
             currentSoilMoisture == null
         ) {
             res.json({
                 success: false,
-                message: "Missing required fields",
+                message:
+                    "Missing required fields or invalide soil moisture values",
             });
         } else {
-            sendEmail(email, minimumSoilMoisture, currentSoilMoisture);
+            sendEmail(
+                email,
+                minimumSoilMoisture,
+                currentSoilMoisture,
+                maximumSoilMoisture,
+            );
         }
 
         // Example response
