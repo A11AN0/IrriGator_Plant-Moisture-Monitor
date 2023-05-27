@@ -21,7 +21,7 @@ int setMinSoilMoisturePercentage;
 
 
 int sendNotificationEmailCounter = 0;
-int SEND_NOTIFICATION_EMAIL_INTERVAL = 360; //Minimum Interval (in minutes) between low soil moisture notification emails, to avoid spamming the user - 360 is 1 email every 6 hours :), also avoids excessive API calls
+int notificationIntervalSetting = 360; //Minimum Interval (in minutes) between low soil moisture notification emails, to avoid spamming the user - 360 is 1 email every 6 hours :), also avoids excessive API calls
 
 
 
@@ -44,17 +44,21 @@ int obtainSoilMoisture() {
 
 void sendEmail(int currentMoisture, int minMoistureSetting, int maxMoistureSetting) {
     
-        if (sendNotificationEmailCounter == 0) {
+        if (sendNotificationEmailCounter <= 0) {
             const char * email = setUserEmail.c_str();
             int currentSoilMoisture = currentMoisture;
             int minimumSoilMoisture = minMoistureSetting;
             int maximumSoilMoisture = maxMoistureSetting;
             Particle.publish("sendEmailNotif", String::format("{\"currentSoilMoisture\":%d,\"minimumSoilMoisture\":%d,\"maximumSoilMoisture\":%d,\"email\":\"%s\"}", currentSoilMoisture, minimumSoilMoisture, maximumSoilMoisture, email));
-            sendNotificationEmailCounter = SEND_NOTIFICATION_EMAIL_INTERVAL;
+            sendNotificationEmailCounter = notificationIntervalSetting;
+        }
+        else
+        {
+           //To set the counter each loop and time the moisture sensor 
+            sendNotificationEmailCounter -= 1;
         }
        
-        //To set the counter each loop and time the moisture sensor 
-        sendNotificationEmailCounter -= sendNotificationEmailCounter == 0 ? 0 : 1;
+        
 }
 
 void executeSensorRead() {
@@ -83,14 +87,19 @@ void updateUserSettings() {
         setUserEmail = ThingSpeak.readStringField(USER_SETTINGS_API_NUMBER, 1, USER_SETTINGS_API_KEY);
         setMaxSoilMoisturePercentage = ThingSpeak.readIntField(USER_SETTINGS_API_NUMBER, 2, USER_SETTINGS_API_KEY);
         setMinSoilMoisturePercentage = ThingSpeak.readIntField(USER_SETTINGS_API_NUMBER, 3, USER_SETTINGS_API_KEY);
-        SEND_NOTIFICATION_EMAIL_INTERVAL = ThingSpeak.readIntField(USER_SETTINGS_API_NUMBER, 4, USER_SETTINGS_API_KEY);
         
-        updateUserSettingsCounter = UPDATE_USER_SETTING_INTERVAL + 1;
+        if(notificationIntervalSetting != ThingSpeak.readIntField(USER_SETTINGS_API_NUMBER, 4, USER_SETTINGS_API_KEY)) {
+            //only change notificationInterval setting if it has changed on thingspeak
+            notificationIntervalSetting = ThingSpeak.readIntField(USER_SETTINGS_API_NUMBER, 4, USER_SETTINGS_API_KEY);
+            sendNotificationEmailCounter = notificationIntervalSetting;
+        };
+        
+        updateUserSettingsCounter = UPDATE_USER_SETTING_INTERVAL;
     }
     else {
         updateUserSettingsCounter -= 1;
     }
-
+    
 }
 
 void loop() {
