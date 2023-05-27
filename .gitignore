@@ -1395,3 +1395,4 @@ MailSendAPI/node_modules/url-join/bin/changelog
 MailSendAPI/node_modules/url-join/lib/url-join.js
 MailSendAPI/node_modules/url-join/test/tests.js
 MailSendAPI/.vscode/settings.json
+MailSendAPI/dist/server.dev.js
