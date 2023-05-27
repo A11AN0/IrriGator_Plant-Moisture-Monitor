@@ -68,8 +68,8 @@ body {
 }
 
 .widget {
-    width: 275px;
-    height: 275px;
+    width: 290px;
+    height: 290px;
     margin: 1px;
     display: flex;
     flex-direction: column;
