@@ -2,7 +2,6 @@
 
 &nbsp;
 ![Irri-Gator](./Resources/IrriGator-Logo.png)
-&nbsp;
 
 ## Background
 
