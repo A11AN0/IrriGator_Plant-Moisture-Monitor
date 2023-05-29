@@ -135,10 +135,10 @@ app.post("/emailSender", (req, res) => {
         } else if (
             !email ||
             !maximumSoilMoisture ||
-            maximumSoilMoisture < 0 ||
-            minimumSoilMoisture < 0 ||
-            currentSoilMoisture < 0 ||
-            maximumSoilMoisture < minimumSoilMoisture ||
+            Number(maximumSoilMoisture) < 0 ||
+            Number(minimumSoilMoisture) < 0 ||
+            Number(currentSoilMoisture) < 0 ||
+            Number(maximumSoilMoisture) < Number(minimumSoilMoisture) ||
             !minimumSoilMoisture ||
             currentSoilMoisture == null
         ) {
@@ -150,9 +150,9 @@ app.post("/emailSender", (req, res) => {
         } else {
             sendEmail(
                 email,
-                minimumSoilMoisture,
-                currentSoilMoisture,
-                maximumSoilMoisture,
+                Number(minimumSoilMoisture),
+                Number(currentSoilMoisture),
+                Number(maximumSoilMoisture),
             );
         }
 
