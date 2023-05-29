@@ -1,3 +1,5 @@
+const writeAPIKey = "K58A4TT85PCXBW3Y";
+const readAPIKey = "BJXL1CNIOQBB00XG";
 const widgets = document.querySelectorAll(".widget");
 const inputs = document.querySelectorAll(".input");
 const navButton = document.querySelector(".navButton");
@@ -111,7 +113,7 @@ const updateSettings = async () => {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            api_key: "K58A4TT85PCXBW3Y",
+            api_key: writeAPIKey,
             field1: emailInput.value,
             field2: Math.round(maxMoistureInput.value),
             field3: Math.round(minMoistureInput.value),
@@ -125,7 +127,7 @@ const updateSettings = async () => {
 const getSettings = async () => {
     const results = (
         await fetch(
-            "https://api.thingspeak.com/channels/2159771/feeds/last.json?api_key=BJXL1CNIOQBB00XG",
+            `https://api.thingspeak.com/channels/2159771/feeds/last.json?api_key=${readAPIKey}`,
         )
     ).json();
     const userSettings = await results;
