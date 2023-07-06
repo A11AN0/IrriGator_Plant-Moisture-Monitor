@@ -1,4 +1,4 @@
-# SIT210 Project - Allan Odunga
+# IrriGator
 
 &nbsp;
 ![Irri-Gator](./Resources/IrriGator-Logo.png)
