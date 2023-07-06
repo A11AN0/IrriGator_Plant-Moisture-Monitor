@@ -1,4 +1,4 @@
-# IrriGator
+# IrriGator by A11AN
 
 &nbsp;
 ![Irri-Gator](./Resources/IrriGator-Logo.png)
